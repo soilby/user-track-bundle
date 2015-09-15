@@ -1,0 +1,8 @@
+services:
+    soil_user_track.controller.track_controller:
+        class: Soil\UserTrackBundle\Controller\TrackController
+        arguments: [@soil_user_track.service.activity_service]
+
+    soil_user_track.service.activity_service:
+        class: Soil\UserTrackBundle\Service\ActivityService
+        arguments: [@doctrine_mongodb]

@@ -1,0 +1,9 @@
+soil_discover_homepage:
+    path:     /tr/{track_id}/{user_uri}
+    defaults:
+        _controller: soil_user_track.controller.track_controller:trackAction
+        expected_class: false
+        user_uri: null
+        track_id: null
+    requirements:
+        user_uri: .+
