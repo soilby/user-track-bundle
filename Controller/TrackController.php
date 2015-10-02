@@ -39,7 +39,7 @@ class TrackController {
                     $user_uri = array_key_exists('user_uri', $data) ? $data['user_uri'] : null;
                 }
                 if (!$track_id) {
-                    $track_id = array_key_exists('track_id', $data) ? $data['user_uri'] : null;
+                    $track_id = array_key_exists('track_id', $data) ? $data['track_id'] : null;
                 }
                 unset($data['user_uri']);
                 unset($data['track_id']);
@@ -53,9 +53,24 @@ class TrackController {
             $trackDoc = $this->activityService->getTrackDoc($user_uri, $track_id);
 
             $activityEntry = new ActivityEntry();
-            $activityEntry->setIp($_SERVER['REMOTE_ADDR']);
-            $activityEntry->setAgent($_SERVER['HTTP_USER_AGENT']);
-            $activityEntry->setReferer($_SERVER['HTTP_REFERER']);
+            if (array_key_exists('REMOTE_ADDR', $_SERVER)) {
+                $activityEntry->setIp($_SERVER['REMOTE_ADDR']);
+            }
+
+            if (array_key_exists('agent', $data))  {
+                $activityEntry->setAgent($data['agent']);
+            }
+            else    {
+                if (array_key_exists('HTTP_USER_AGENT', $_SERVER)) {
+                    $activityEntry->setAgent($_SERVER['HTTP_USER_AGENT']);
+                }
+            }
+
+
+
+            if (array_key_exists('HTTP_REFERER', $_SERVER)) {
+                $activityEntry->setReferer($_SERVER['HTTP_REFERER']);
+            }
 
             if (array_key_exists('page', $data))    {
                 $activityEntry->setPage($data['page']);

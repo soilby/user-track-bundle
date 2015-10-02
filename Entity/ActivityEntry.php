@@ -13,7 +13,7 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 /**
  * Class ActivityEntry
  * @package Soil\UserTrackBundle\Entity
- * @ODM\EmbedDocument
+ * @ODM\EmbeddedDocument
  */
 class ActivityEntry {
 
@@ -35,7 +35,7 @@ class ActivityEntry {
 
     /**
      * @var \DateTime
-     * @ODM\DateTime
+     * @ODM\Date
      */
     protected $timestamp;
 

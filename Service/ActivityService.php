@@ -22,22 +22,26 @@ class ActivityService {
     protected $dm;
 
     public function __construct($dm)   {
-        $this->dm = $dm;
+        $this->dm = $dm->getManager();;
 
     }
 
-    public function getTrackDoc($userUri)   {
-        $entry = $this->getRepository()->find($userUri);
+    public function getTrackDoc($userUri, $trackId)   {
+        $entry = $this->getRepository()->findOneBy([
+            'userUri' => $userUri,
+            'browserTrackId' => $trackId
+        ]);
         if (!$entry)    {
-            $entry = $this->factory($userUri);
+            $entry = $this->factory($userUri, $trackId);
         }
 
         return $entry;
     }
 
-    public function factory($userUri)   {
+    public function factory($userUri, $trackId)   {
         $entry = new TrackDoc();
         $entry->setUserUri($userUri);
+        $entry->setBrowserTrackId($trackId);
 
         $this->dm->persist($entry);
 
@@ -46,7 +50,7 @@ class ActivityService {
 
     public function getRepository() {
         if (!$this->trackEntryRepo) {
-            $this->trackEntryRepo = $this->dm->getRepository('Soil\UserTrackBundle\Entity\TrackEntry');
+            $this->trackEntryRepo = $this->dm->getRepository('Soil\UserTrackBundle\Entity\TrackDoc');
 
         }
 

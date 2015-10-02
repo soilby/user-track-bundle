@@ -26,19 +26,19 @@ class TrackDoc {
 
     /**
      * @var string
-     * @ODM\String
+     * @ODM\String(name="user_uri")
      */
     protected $userUri;
 
     /**
      * @var string
-     * @ODM\String
+     * @ODM\String(name="browser_track_id")
      */
     protected $browserTrackId;
 
     /**
      * @var ArrayCollection
-     * @ODM\Collection
+     * @ODM\EmbedMany(targetDocument="Soil\UserTrackBundle\Entity\ActivityEntry")
      */
     protected $activity;
 
