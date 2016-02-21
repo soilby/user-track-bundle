@@ -31,6 +31,7 @@ class TrackController {
             if ($request->isMethod('POST')) {
                 $content = $request->getContent();
                 $data = json_decode($content, true);
+                file_put_contents('/tmp/a', $content);
 
                 if (!$data) throw new \Exception('Request malformed');
 
@@ -44,6 +45,8 @@ class TrackController {
                 unset($data['user_uri']);
                 unset($data['track_id']);
 
+
+
             } else {
                 $data = [];
             }
@@ -53,8 +56,13 @@ class TrackController {
             $trackDoc = $this->activityService->getTrackDoc($user_uri, $track_id);
 
             $activityEntry = new ActivityEntry();
-            if (array_key_exists('REMOTE_ADDR', $_SERVER)) {
-                $activityEntry->setIp($_SERVER['REMOTE_ADDR']);
+            if (array_key_exists('user_ip', $data))  {
+                $activityEntry->setIp($data['user_ip']);
+            }
+            else    {
+                if (array_key_exists('REMOTE_ADDR', $_SERVER)) {
+                    $activityEntry->setIp($_SERVER['REMOTE_ADDR']);
+                }
             }
 
             if (array_key_exists('agent', $data))  {
