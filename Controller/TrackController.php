@@ -25,6 +25,11 @@ class TrackController {
         $this->activityService = $activityService;
 
     }
+    
+    public function visitAction()   {
+        
+        return new JsonResponse($_SERVER);
+    }
 
     public function trackAction($track_id, $user_uri, Request $request)   {
         try {

@@ -1,4 +1,4 @@
-soil_discover_homepage:
+soil_track_endpoint:
     path:     /tr/{track_id}/{user_uri}
     defaults:
         _controller: soil_user_track.controller.track_controller:trackAction
@@ -7,3 +7,8 @@ soil_discover_homepage:
         track_id: null
     requirements:
         user_uri: .+
+
+soil_track_visit:
+    path:     /visit
+    defaults:
+        _controller: soil_user_track.controller.track_controller:visitAction
