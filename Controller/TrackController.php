@@ -4,6 +4,7 @@ namespace Soil\UserTrackBundle\Controller;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use EasyRdf\Serialiser\Json;
 use Soil\UserTrackBundle\Entity\ActivityEntry;
+use Soil\UserTrackBundle\Entity\PageVisit;
 use Soil\UserTrackBundle\Service\ActivityService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -34,21 +35,51 @@ class TrackController {
         };
         $pageURI = $_SERVER['HTTP_REFERER'];
 
+        $entries = parse_url($pageURI);
+        $pageURI = $entries['scheme'] . '://' . $entries['host'] . $entries['path'];
+
         $repo = $this->activityService->getPageVisitRepository();
-        $qb = $repo->createQueryBuilder();
 
-        $qb->upsert(true)
-            ->field('pageURI')->equals($pageURI)
-            ->field('visitCount')->inc(1);
+        /**
+         * @var PageVisit $visitEntry
+         */
+        $visitEntry = $repo->findOneBy([
+            'pageURI' => $pageURI
+        ]);
+        
+        if ($visitEntry)    {
+            $visitEntry->incrementVisit();
+        }
+        else    {
+            $visitEntry = new PageVisit();
+            $visitEntry->setPageURI($pageURI);
+            $visitEntry->setVisitCount(1);
+            
+            $repo->getDocumentManager()->persist($visitEntry);
+        }
 
-        $ret = $qb->getQuery()->execute();
+        $repo->getDocumentManager()->flush();
+        
+        
+//        $qb = $repo->createQueryBuilder();
+//        $qb
+//            ->field('pageURI')->equals($pageURI);
+//
+//
+//        $qb->upsert(true)
+//            ->field('pageURI')->equals($pageURI)
+//            ->field('visitCount')->inc(1);
+//
+//        $ret = $qb->getQuery()->execute();
 
 //        $ip = $_SERVER['REMOTE_ADDR'];
         
 
+//        ob_start();
+//var_dump($ret);
+//        $s = ob_get_clean();
 
-
-        return new JsonResponse($ret);
+        return new JsonResponse(['count' => $visitEntry->getVisitCount()]);
     }
 
     public function trackAction($track_id, $user_uri, Request $request)   {
