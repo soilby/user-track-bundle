@@ -2,6 +2,7 @@
 namespace Soil\UserTrackBundle\Controller;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
+use EasyRdf\Serialiser\Json;
 use Soil\UserTrackBundle\Entity\ActivityEntry;
 use Soil\UserTrackBundle\Service\ActivityService;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -27,8 +28,27 @@ class TrackController {
     }
     
     public function visitAction()   {
+
+        if (!array_key_exists('HTTP_REFERER', $_SERVER) || !$_SERVER['HTTP_REFERER']) {
+            return new JsonResponse([], 400);
+        };
+        $pageURI = $_SERVER['HTTP_REFERER'];
+
+        $repo = $this->activityService->getPageVisitRepository();
+        $qb = $repo->createQueryBuilder();
+
+        $qb->upsert(true)
+            ->field('pageURI')->equals($pageURI)
+            ->field('visitCount')->inc(1);
+
+        $ret = $qb->getQuery()->execute();
+
+//        $ip = $_SERVER['REMOTE_ADDR'];
         
-        return new JsonResponse($_SERVER);
+
+
+
+        return new JsonResponse($ret);
     }
 
     public function trackAction($track_id, $user_uri, Request $request)   {

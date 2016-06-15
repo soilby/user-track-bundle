@@ -15,6 +15,8 @@ class ActivityService {
 
 
     protected $trackEntryRepo;
+    
+    protected $pageVisitRepo;
 
     /**
      * @var DocumentManager
@@ -55,6 +57,18 @@ class ActivityService {
         }
 
         return $this->trackEntryRepo;
+    }
+
+    /**
+     * @return \Doctrine\ODM\MongoDB\DocumentRepository
+     */
+    public function getPageVisitRepository() {
+        if (!$this->pageVisitRepo) {
+            $this->pageVisitRepo = $this->dm->getRepository('Soil\UserTrackBundle\Entity\PageVisit');
+
+        }
+
+        return $this->pageVisitRepo;
     }
 
     public function flush() {
